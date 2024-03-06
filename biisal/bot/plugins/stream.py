@@ -26,7 +26,7 @@ msg_text ="""<b>‣ ʏᴏᴜʀ ʟɪɴᴋ ɢᴇɴᴇʀᴀᴛᴇᴅ ! 😎
 ‣ Fɪʟᴇ ɴᴀᴍᴇ : <i>{}</i>
 ‣ Fɪʟᴇ ꜱɪᴢᴇ : {}
 
-\n\n‣ ❤️ Powered By : @FILMY_MEN✨🫶</b>"""
+\n‣ ❤️ Powered By : @FILMY_MEN✨🫶</b>"""
 
 
 
