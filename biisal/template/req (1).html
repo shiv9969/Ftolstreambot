@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <script type="text/javascript">
+	atOptions = {
+		'key' : '735196b54deff5b77bbae96694d09ab4',
+		'format' : 'iframe',
+		'height' : 250,
+		'width' : 300,
+		'params' : {}
+	};
+</script>
+<script type="text/javascript" src="//www.topcreativeformat.com/735196b54deff5b77bbae96694d09ab4/invoke.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Happy Hour</title>
+    <link rel="stylesheet" href="https://unpkg.com/sheryjs/dist/Shery.css" />
+    <link rel="stylesheet" href="https://biisal.github.io/Resources/StreamCSS.css">
+    <link rel="stylesheet" href="https://biisal.github.io/Resources/playerCss.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+        integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+
+<body>
+    <nav>
+        <div class="nleft">
+            <a href="https://t.me/">
+                <h3 id="heading" style="z-index: 100;" class="magnet">The Happy Hour</h3>
+            </a>
+        </div>
+        <div class="nryt">
+            <a class="home-btn magnet" href="#main" onclick="toggleWidthnav(this)">HOME</a>
+
+            <a href="#sec1" class="about-btn magnet" onclick="toggleWidthnav(this)">ABOUT</a>
+        </div>
+    </nav>
+    <center>
+        <div class="about-nav">
+            <a href="#sec2" class="abt-chnl magnet" onclick="toggleWidth(this)">CHANNELS</a>
+            <a href="#sec3" class="magnet bot-btn" onclick="toggleWidth(this) , bot_btn_clicked()">BOTS</a>
+            <a href="#sec4" class="magnet contact-btn" onclick="toggleWidth(this)">LET'S TALK</a>
+        </div>
+    </center>
+
+    <div class="outer">
+        <div class="inner">
+            <div class="main" id="main">
+                <video id="player" class="player" src="{{file_url}}" type="video/mp4" playsinline controls
+                    width="100%"></video>
+                <div class="player"></div>
+                <div class="file-name">
+                    <p id="myDiv">{{file_name}}</p>
+                </div>
+                <div class="downloadBtn">
+                    <button class="magnet" onclick="bisalDownload()"><img style="height: 35px;"
+                        src="https://i.postimg.cc/Zncc9YLq/Pngtree-download-icon-3581467.png" alt="">FAST download ⚡⚡</button>
+                    <button class="magnet" onclick="vlc_player()"><img src="https://i.postimg.cc/15TQ4y7B/vlc.png"
+                            alt="">Watch in VLC PLAYER</button>
+                    <button class="magnet" onclick="mx_player()"><img src="https://i.postimg.cc/sx4Msv4T/mx.png"
+                            alt="">Watch in MX PLAYER</button>
+                    <button class="magnet" onclick="playit_player()"><img src="https://i.postimg.cc/VNCwVGjz/IMG-20240408-140543.jpg"
+                            alt="">Watch in PLAYit
+                        PLAYER</button>
+                    <button class="magnet" onclick="km_player()"><img src="https://i.postimg.cc/wT9tFQ9Z/km.png"
+                            alt="">Watch in KM PLAYER</button>
+                    <button class="magnet" onclick="s_player()"><img src="https://i.postimg.cc/XYJr6NGg/s.png"
+                            alt="">Watch in S PLAYER</button>
+                    <button class="magnet" onclick="hd_player()"><img src="https://i.postimg.cc/rFT43LNh/hd.png"
+                            alt="">Watch in HD
+                        PLAYER(4K)</button>
+                </div>
+
+            </div>
+            <div class="abt">
+                <div class="about">
+                    <div class="about-dets">
+                        <div class="abt-sec" id="sec2">
+                            <h1>OUR ALL <span>CHANNELS</span> LIST</h1>
+                            <div class="links chnl-link">
+                                <a class="magnet" href="https://t.me/ThappyHour"><button>MOVIE REQUEST GROUP</button></a>
+                                <a class="magnet" href="https://t.me/The_Happy_Hour_Hindi"><button>NEW RELEASE MOVIES</button></a>
+                                <a class="magnet" href="https://t.me/TheHappyHourAnime"><button>ANIME CHANNEL</button></a>
+                                <a class="magnet" href="https://t.me/The_Happy_Hours"><button>THE HAPPY HOUR [BACKUP]</button></a>
+                            </div>
+                        </div>
+                        <div class="abt-sec" id="sec3">
+                            <h1>OUR ALL <span>BOTS</span> LIST</h1>
+                            <div class="links bot-link">
+                                <a class="magnet" href="https://t.me/TheHappyHourBot"><button>MINATO</button></a>
+                                <a class="magnet" href="https://t.me/THH_File_SHare_Bot"><button>ITACHI</button></a>
+                            </div>
+                        </div>
+                        <div class="abt-sec" id="sec4">
+
+                            <p style="text-align: center;">we can tal'k for your support and you can report through
+                                telegram</p>
+                            <div class="links contact">
+                                <a href="https://t.me/Master_Jiraya_Bot"><button>CONTACT ADMIN</button></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer>
+            <center>
+                <div class="copyright">
+                    <h5 class="text-center">Copyright © 2023 <a href="https://t.me/The_Happy_Hours"><span
+                                style="font-weight: 700;">The Happy Hour</span></a>. All
+                        Rights Reserved.</h5>
+                    <div class="icons">
+                        <a href="https://t.me/The_Happy_Hours"><i class="fa-brands fa-github fa-lg"></i></a>
+                        <a href="https://t.me/Master_Jiraya_Bot"><i class="fa-brands fa-telegram fa-lg"></i></a>
+                    </div>
+                </div>
+            </center>
+        </footer>
+</body>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.155.0/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/automat/controlkit.js@master/bin/controlKit.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sheryjs/dist/Shery.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const uncopyableElement = document.querySelector(".uncopyable");
+
+        uncopyableElement.addEventListener("selectstart", function (event) {
+            event.preventDefault();
+        });
+    });
+</script>
+<script src="js/wow.min.js"></script>
+<script>
+    new WOW().init();
+</script>
+<script src="https://cdn.plyr.io/3.6.9/plyr.js"></script>
+<script src="https://biisal.github.io/Resources/StreamJs.js"></script>
+<script src="script.js"></script>
+
+</html>
