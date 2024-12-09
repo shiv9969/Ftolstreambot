@@ -15,7 +15,7 @@ class Var(object):
     API_ID = int(getenv('API_ID', '9301087'))
     API_HASH = str(getenv('API_HASH', 'cbabdb3f23de6326352ef3ac26338d9c'))
     BOT_TOKEN = str(getenv('BOT_TOKEN' , '7368488558:AAFJZYQoRsnaf4v0UR2NlTRiIj6GnnbwnvY'))
-    name = str(getenv('name', 'BoB_Stream_Bot'))
+    name = str(getenv('name', 'FToLStreamBot'))
     SLEEP_THRESHOLD = int(getenv('SLEEP_THRESHOLD', '60'))
     WORKERS = int(getenv('WORKERS', '4'))
     BIN_CHANNEL = int(getenv('BIN_CHANNEL', '-1002178176007'))
