@@ -3,13 +3,12 @@ import urllib.parse
 from aiohttp import web
 from biisal.bot import StreamBot
 from biisal.utils.file_properties import get_file_ids
-from biisal.server.exceptions import InvalidHash
 from biisal.vars import Var
 
-async def render_page(request):
+async def render_page(request: web.Request):
     # Extract query parameters
     id = request.match_info.get("id")
-    secure_hash = request.match_info.get("hash")
+    secure_hash = request.rel_url.query.get("hash")
 
     if not id or not secure_hash:
         return web.Response(text="Invalid request parameters", status=400)
@@ -30,4 +29,4 @@ async def render_page(request):
     direct_file_url = f"{Var.URL}/stream/{id}/{urllib.parse.quote_plus(file_data.file_name)}?hash={secure_hash}"
 
     # Redirect user to the direct file URL
-    raise web.HTTPFound(direct_file_url)
+    return web.HTTPFound(direct_file_url) 
