@@ -1,5 +1,3 @@
-#(c) Adarsh-Goel
-#(c) @biisal
 import os
 import asyncio
 from asyncio import TimeoutError
@@ -9,28 +7,21 @@ from biisal.utils.human_readable import humanbytes
 from biisal.vars import Var
 from urllib.parse import quote_plus
 from pyrogram import filters, Client
-from pyrogram.errors import FloodWait, UserNotParticipant
-from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
-#from utils_bot import get_shortlink
+from pyrogram.errors import FloodWait, UserNotParticipant, MessageNotModified
+from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 
 from biisal.utils.file_properties import get_name, get_hash, get_media_file_size
+
 db = Database(Var.DATABASE_URL, Var.name)
 
-
-MY_PASS = os.environ.get("MY_PASS", None)
-pass_dict = {}
-pass_db = Database(Var.DATABASE_URL, "ag_passwords")
-
-msg_text ="""<b>‣ ʏᴏᴜʀ ʟɪɴᴋ ɢᴇɴᴇʀᴀᴛᴇᴅ ! 😎
+msg_text = """<b>‣ ʏᴏᴜʀ ʟɪɴᴋ ɢᴇɴᴇʀᴀᴛᴇᴅ ! 😎
 
 ‣ Fɪʟᴇ ɴᴀᴍᴇ : <i>{}</i>
 ‣ Fɪʟᴇ ꜱɪᴢᴇ : {}
 
 \n‣ ❤️ Powered By : @BoB_Files1✨🫶</b>"""
 
-
-
-@StreamBot.on_message((filters.private) & (filters.document | filters.video | filters.audio | filters.photo) , group=4)
+@StreamBot.on_message(filters.private & (filters.document | filters.video | filters.audio | filters.photo), group=4)
 async def private_receive_handler(c: Client, m: Message):
     if not await db.is_user_exist(m.from_user.id):
         await db.add_user(m.from_user.id)
@@ -38,91 +29,80 @@ async def private_receive_handler(c: Client, m: Message):
             Var.BIN_CHANNEL,
             f"New User Joined! : \n\n Name : [{m.from_user.first_name}](tg://user?id={m.from_user.id}) Started Your Bot!!"
         )
-    if Var.UPDATES_CHANNEL != "None":
-        try:
-            user = await c.get_chat_member(Var.UPDATES_CHANNEL, m.chat.id)
-            if user.status == "kicked":
-                await c.send_message(
-                    chat_id=m.chat.id,
-                    text="You are banned!\n\n  **Cᴏɴᴛᴀᴄᴛ Support [Support](https://t.me/assaulter_shiv) They Wɪʟʟ Hᴇʟᴘ Yᴏᴜ**",
-                    
-                    disable_web_page_preview=True
-                )
-                return 
-        except UserNotParticipant:
-            await c.send_photo(
-                chat_id=m.chat.id,
-                photo="https://telegra.ph/file/d212055d9ab7bd2927f8e.jpg",
-                caption=""""<b>Hᴇʏ ᴛʜᴇʀᴇ!\n\nPʟᴇᴀsᴇ ᴊᴏɪɴ ᴏᴜʀ ᴜᴘᴅᴀᴛᴇs ᴄʜᴀɴɴᴇʟ ᴛᴏ ᴜsᴇ ᴍᴇ ! 😊\n\nDᴜᴇ ᴛᴏ sᴇʀᴠᴇʀ ᴏᴠᴇʀʟᴏᴀᴅ, ᴏɴʟʏ ᴏᴜʀ ᴄʜᴀɴɴᴇʟ sᴜʙsᴄʀɪʙᴇʀs ᴄᴀɴ ᴜsᴇ ᴛʜɪs ʙᴏᴛ !</b>""",
-                reply_markup=InlineKeyboardMarkup(
-                    [
-                        [
-                            InlineKeyboardButton("Jᴏɪɴ ɴᴏᴡ 🚩", url=f"https://t.me/{Var.UPDATES_CHANNEL}")
-                        ]
-                    ]
-                ),
-                
-            )
-            return
-        except Exception as e:
-            await m.reply_text(e)
-            await c.send_message(
-                chat_id=m.chat.id,
-                text="**Sᴏᴍᴇᴛʜɪɴɢ ᴡᴇɴᴛ Wʀᴏɴɢ. Cᴏɴᴛᴀᴄᴛ ᴍʏ Support** [Support](https://t.me/assaulter_shiv)",
-                
-                disable_web_page_preview=True)
-            return
+
     try:
         log_msg = await m.forward(chat_id=Var.BIN_CHANNEL)
-        stream_link = f"{Var.URL}watch/{str(log_msg.id)}/{quote_plus(get_name(log_msg))}?hash={get_hash(log_msg)}"
-        online_link = f"{Var.URL}{str(log_msg.id)}/{quote_plus(get_name(log_msg))}?hash={get_hash(log_msg)}"
+        stream_link = f"{Var.URL}watch/{log_msg.id}/{quote_plus(get_name(log_msg))}?hash={get_hash(log_msg)}"
+        online_link = f"{Var.URL}{log_msg.id}/{quote_plus(get_name(log_msg))}?hash={get_hash(log_msg)}"
 
-        await log_msg.reply_text(text=f"**RᴇQᴜᴇꜱᴛᴇᴅ ʙʏ :** [{m.from_user.first_name}](tg://user?id={m.from_user.id})\n**Uꜱᴇʀ ɪᴅ :** `{m.from_user.id}`\n**Stream ʟɪɴᴋ :** {stream_link}", disable_web_page_preview=True,  quote=True)
-        await m.reply_text(
-            text=msg_text.format(get_name(log_msg), humanbytes(get_media_file_size(m)), online_link, stream_link),
-            quote=True,
-            disable_web_page_preview=True,
-            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("sᴛʀᴇᴀᴍ 🔺", url=stream_link), #Stream Link
-                                                InlineKeyboardButton('ᴅᴏᴡɴʟᴏᴀᴅ 🔻', url=online_link)]]) #Download Link
-        )
-    except FloodWait as e:
-        print(f"Sleeping for {str(e.x)}s")
-        await asyncio.sleep(e.x)
-        await c.send_message(chat_id=Var.BIN_CHANNEL, text=f"Gᴏᴛ FʟᴏᴏᴅWᴀɪᴛ ᴏғ {str(e.x)}s from [{m.from_user.first_name}](tg://user?id={m.from_user.id})\n\n**𝚄𝚜𝚎𝚛 𝙸𝙳 :** `{str(m.from_user.id)}`", disable_web_page_preview=True)
-
-@StreamBot.on_message(filters.channel & ~filters.group & (filters.document | filters.video | filters.photo)  & ~filters.forwarded, group=-1)
-async def channel_receive_handler(bot, broadcast):
-    if int(broadcast.chat.id) in Var.BAN_CHNL:
-        print("chat trying to get straming link is found in BAN_CHNL,so im not going to give stram link")
-        return
-    if int(broadcast.chat.id) in Var.BANNED_CHANNELS:
-        await bot.leave_chat(broadcast.chat.id)
-        return
-    try:
-        log_msg = await broadcast.forward(chat_id=Var.BIN_CHANNEL)
-        stream_link = f"{Var.URL}watch/{str(log_msg.id)}/{quote_plus(get_name(log_msg))}?hash={get_hash(log_msg)}"
-        online_link = f"{Var.URL}{str(log_msg.id)}/{quote_plus(get_name(log_msg))}?hash={get_hash(log_msg)}"
         await log_msg.reply_text(
-            text=f"**Channel Name:** `{broadcast.chat.title}`\n**CHANNEL ID:** `{broadcast.chat.id}`\n**Rᴇǫᴜᴇsᴛ ᴜʀʟ:** {stream_link}",
+            text=f"**Requested by:** [{m.from_user.first_name}](tg://user?id={m.from_user.id})\n"
+                 f"**User ID:** `{m.from_user.id}`\n"
+                 f"**Stream link:** {stream_link}",
+            disable_web_page_preview=True,
             quote=True
         )
-        await bot.edit_message_reply_markup(
-            chat_id=broadcast.chat.id,
-            message_id=broadcast.id,
-            reply_markup=InlineKeyboardMarkup(
-                [
-                    [InlineKeyboardButton("sᴛʀᴇᴀᴍ 🔺", url=stream_link),
-                    InlineKeyboardButton('ᴅᴏᴡɴʟᴏᴀᴅ 🔻', url=online_link)] 
-                ]
-            )
-        )
-    except FloodWait as w:
-        print(f"Sleeping for {str(w.x)}s")
-        await asyncio.sleep(w.x)
-        await bot.send_message(chat_id=Var.BIN_CHANNEL,
-                            text=f"GOT FLOODWAIT OF {str(w.x)}s FROM {broadcast.chat.title}\n\n**CHANNEL ID:** `{str(broadcast.chat.id)}`",
-                            disable_web_page_preview=True)
-    except Exception as e:
-        await bot.send_message(chat_id=Var.BIN_CHANNEL, text=f"**#ERROR_TRACKEBACK:** `{e}`", disable_web_page_preview=True)
-        print(f"Cᴀɴ'ᴛ Eᴅɪᴛ Bʀᴏᴀᴅᴄᴀsᴛ Mᴇssᴀɢᴇ!\nEʀʀᴏʀ:  **Give me edit permission in updates and bin Channel!{e}**")
 
+        await m.reply_text(
+            text=msg_text.format(get_name(log_msg), humanbytes(get_media_file_size(m))),
+            quote=True,
+            disable_web_page_preview=True,
+            reply_markup=InlineKeyboardMarkup([
+                [InlineKeyboardButton("📺 Stream", url=stream_link),
+                 InlineKeyboardButton("📥 Download", url=online_link)],
+                [InlineKeyboardButton("📂 Get File", callback_data=f"get_file_{log_msg.id}")]
+            ])
+        )
+    except FloodWait as e:
+        print(f"Sleeping for {e.x} seconds due to FloodWait.")
+        await asyncio.sleep(e.x)
+
+@StreamBot.on_callback_query(filters.regex(r"get_file_(\d+)"))
+async def get_file_button_handler(c: Client, query: CallbackQuery):
+    message_id = int(query.data.split("_")[2])
+
+    try:
+        file_msg = await c.get_messages(chat_id=Var.BIN_CHANNEL, message_ids=message_id)
+
+        if not file_msg or not file_msg.document and not file_msg.video and not file_msg.audio and not file_msg.photo:
+            await query.answer("⚠ No file found!", show_alert=True)
+            return
+
+        await query.message.reply_text(f"📂 **Here is your requested file:**", quote=True)
+        await file_msg.copy(chat_id=query.message.chat.id)
+
+    except Exception as e:
+        await query.answer(f"⚠ Error: {str(e)}", show_alert=True)
+
+@StreamBot.on_message(filters.channel & (filters.document | filters.video | filters.photo) & ~filters.forwarded, group=-1)
+async def channel_receive_handler(bot, broadcast):
+    try:
+        log_msg = await broadcast.forward(chat_id=Var.BIN_CHANNEL)
+        stream_link = f"{Var.URL}watch/{log_msg.id}/{quote_plus(get_name(log_msg))}?hash={get_hash(log_msg)}"
+        online_link = f"{Var.URL}{log_msg.id}/{quote_plus(get_name(log_msg))}?hash={get_hash(log_msg)}"
+
+        await log_msg.reply_text(
+            text=f"**Channel Name:** `{broadcast.chat.title}`\n"
+                 f"**Channel ID:** `{broadcast.chat.id}`\n"
+                 f"**Stream Link:** {stream_link}",
+            quote=True
+        )
+
+        try:
+            await bot.edit_message_reply_markup(
+                chat_id=broadcast.chat.id,
+                message_id=broadcast.id,
+                reply_markup=InlineKeyboardMarkup([
+                    [InlineKeyboardButton("📺 Stream", url=stream_link),
+                     InlineKeyboardButton("📥 Download", url=online_link)],
+                    [InlineKeyboardButton("📂 Get File", callback_data=f"get_file_{log_msg.id}")]
+                ])
+            )
+        except MessageNotModified:
+            pass
+
+    except FloodWait as e:
+        print(f"Sleeping for {e.x} seconds due to FloodWait.")
+        await asyncio.sleep(e.x)
+    except Exception as e:
+        await bot.send_message(Var.BIN_CHANNEL, f"**Error:** `{e}`")
