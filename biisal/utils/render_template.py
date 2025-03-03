@@ -1,25 +1,20 @@
-import aiohttp
 import logging
-from aiohttp import web
+import urllib.parse
+from fastapi.responses import RedirectResponse
 from biisal.bot import StreamBot
 from biisal.utils.file_properties import get_file_ids
 from biisal.server.exceptions import InvalidHash
 from biisal.vars import Var
 
-async def render_page(request):
-    id = request.match_info.get("id")
-    secure_hash = request.rel_url.query.get("hash")
-
+async def render_page(id: str, secure_hash: str):
     file_data = await get_file_ids(StreamBot, int(Var.BIN_CHANNEL), int(id))
 
     if file_data.unique_id[:6] != secure_hash:
         logging.debug(f"Invalid hash for message ID {id}")
         raise InvalidHash
 
-    # Serve the video file directly instead of returning a text URL
-    file_url = f"{Var.URL}/stream/{id}/{file_data.file_name}?hash={secure_hash}"
-    
-    return web.Response(
-        body=f'<html><body><video controls autoplay><source src="{file_url}" type="video/mp4"></video></body></html>',
-        content_type="text/html"
-    ) 
+    # Generate direct file URL
+    direct_file_url = f"{Var.URL}/stream/{id}/{urllib.parse.quote_plus(file_data.file_name)}?hash={secure_hash}"
+
+    # Redirect user directly to the file for streaming
+    return RedirectResponse(url=direct_file_url)
