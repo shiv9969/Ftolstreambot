@@ -1,6 +1,7 @@
 import logging
 import urllib.parse
-from fastapi.responses import RedirectResponse
+from aiohttp import web
+return web.HTTPFound(direct_file_url)
 from biisal.bot import StreamBot
 from biisal.utils.file_properties import get_file_ids
 from biisal.server.exceptions import InvalidHash
