@@ -13,6 +13,11 @@ import re
 
 from biisal.utils.file_properties import get_name, get_hash, get_media_file_size
 
+# Re-add MY_PASS so it can be imported by other modules
+MY_PASS = os.environ.get("MY_PASS", None)
+pass_dict = {}
+pass_db = Database(Var.DATABASE_URL, "ag_passwords")
+
 db = Database(Var.DATABASE_URL, Var.name)
 
 msg_text = """<b>‣ ʏᴏᴜʀ ʟɪɴᴋ ɢᴇɴᴇʀᴀᴛᴇᴅ ! 😎
@@ -60,7 +65,7 @@ async def private_receive_handler(c: Client, m: Message):
 
 @StreamBot.on_callback_query(filters.regex(r"get_file_(\d+)"))
 async def get_file_button_handler(c: Client, query: CallbackQuery):
-    # Safely extract the message ID using regex capture
+    # Extract the message ID safely using regex
     match = re.search(r"get_file_(\d+)", query.data)
     if match:
         message_id = int(match.group(1))
@@ -70,7 +75,6 @@ async def get_file_button_handler(c: Client, query: CallbackQuery):
 
     try:
         file_msg = await c.get_messages(chat_id=Var.BIN_CHANNEL, message_ids=message_id)
-
         if not file_msg or (not file_msg.document and not file_msg.video and not file_msg.audio and not file_msg.photo):
             await query.answer("⚠ No file found!", show_alert=True)
             return
@@ -112,4 +116,4 @@ async def channel_receive_handler(bot, broadcast):
         print(f"Sleeping for {e.x} seconds due to FloodWait.")
         await asyncio.sleep(e.x)
     except Exception as e:
-        await bot.send_message(Var.BIN_CHANNEL, f"**Error:** `{e}`")
+        await bot.send_message(Var.BIN_CHANNEL, f"**Error:** `{e}`") 
