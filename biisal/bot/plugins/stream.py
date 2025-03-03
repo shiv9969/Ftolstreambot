@@ -80,7 +80,7 @@ async def get_file_button_handler(c: Client, query: CallbackQuery):
             return
 
         await query.message.reply_text("📂 **Here is your requested file:**", quote=True)
-        await file_msg.copy(chat_id=query.message.chat.id)
+        await file_msg.copy(chat_id=query.message.from_user.id)
         await query.answer("File sent!", show_alert=True)
     except Exception as e:
         await query.answer(f"⚠ Error: {str(e)}", show_alert=True)
