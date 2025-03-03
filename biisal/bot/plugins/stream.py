@@ -9,6 +9,7 @@ from urllib.parse import quote_plus
 from pyrogram import filters, Client
 from pyrogram.errors import FloodWait, UserNotParticipant, MessageNotModified
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
+import re
 
 from biisal.utils.file_properties import get_name, get_hash, get_media_file_size
 
@@ -59,18 +60,24 @@ async def private_receive_handler(c: Client, m: Message):
 
 @StreamBot.on_callback_query(filters.regex(r"get_file_(\d+)"))
 async def get_file_button_handler(c: Client, query: CallbackQuery):
-    message_id = int(query.data.split("_")[2])
+    # Safely extract the message ID using regex capture
+    match = re.search(r"get_file_(\d+)", query.data)
+    if match:
+        message_id = int(match.group(1))
+    else:
+        await query.answer("Invalid callback data", show_alert=True)
+        return
 
     try:
         file_msg = await c.get_messages(chat_id=Var.BIN_CHANNEL, message_ids=message_id)
 
-        if not file_msg or not file_msg.document and not file_msg.video and not file_msg.audio and not file_msg.photo:
+        if not file_msg or (not file_msg.document and not file_msg.video and not file_msg.audio and not file_msg.photo):
             await query.answer("⚠ No file found!", show_alert=True)
             return
 
-        await query.message.reply_text(f"📂 **Here is your requested file:**", quote=True)
+        await query.message.reply_text("📂 **Here is your requested file:**", quote=True)
         await file_msg.copy(chat_id=query.message.chat.id)
-
+        await query.answer("File sent!", show_alert=True)
     except Exception as e:
         await query.answer(f"⚠ Error: {str(e)}", show_alert=True)
 
