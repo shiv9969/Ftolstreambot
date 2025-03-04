@@ -63,7 +63,7 @@ async def private_receive_handler(c: Client, m: Message):
         print(f"Sleeping for {e.x} seconds due to FloodWait.")
         await asyncio.sleep(e.x)
 
-@@StreamBot.on_callback_query(filters.regex(r"get_file_(\d+)"))
+@StreamBot.on_callback_query(filters.regex(r"get_file_(\d+)"))
 async def get_file_button_handler(c: Client, query: CallbackQuery):
     match = re.search(r"get_file_(\d+)", query.data)
     if match:
