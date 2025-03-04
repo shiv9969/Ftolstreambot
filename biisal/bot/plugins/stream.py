@@ -79,12 +79,22 @@ async def get_file_button_handler(c: Client, query: CallbackQuery):
             return
 
         user_id = query.from_user.id
+
         try:
+            # Try sending the file in DM
             await c.send_message(user_id, "📂 **Here is your requested file:**")
             await file_msg.copy(chat_id=user_id)
-            await query.answer("File sent to your DM!", show_alert=True)
-        except Exception as e:
-            await query.answer("⚠ Unable to send file in DM. Please start the bot first. @FtoLStreamBot", show_alert=True)
+            await query.answer("✅ File sent to your DM!", show_alert=True)
+        except Exception:
+            # If the user hasn't started the bot, show a "Start Bot" button
+            start_bot_url = f"https://t.me/{c.me.username}?start=files"
+            await query.message.reply_text(
+                "⚠ You need to start the bot first before accessing the file!",
+                reply_markup=InlineKeyboardMarkup([
+                    [InlineKeyboardButton("🤖 Start Bot", url=start_bot_url)]
+                ])
+            )
+            await query.answer("⚠ Start the bot first to receive files!", show_alert=True)
 
     except Exception as e:
         await query.answer(f"⚠ Error: {str(e)}", show_alert=True)
