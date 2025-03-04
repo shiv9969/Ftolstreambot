@@ -24,7 +24,7 @@ import re
 
 from biisal.utils.file_properties import get_name, get_hash, get_media_file_size
 
-Re-add MY_PASS so it can be imported by other modules
+# Re-add MY_PASS so it can be imported by other modules
 
 MY_PASS = os.environ.get("MY_PASS", None)
 
