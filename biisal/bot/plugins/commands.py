@@ -15,7 +15,7 @@ from biisal.utils.file_properties import get_name, get_hash, get_media_file_size
 db = Database(Var.DATABASE_URL, Var.name)
 from pyrogram.types import ReplyKeyboardMarkup
 from biisal.vars import bot_name , bisal_channel , bisal_grp
-from image import upload_to_telegraph
+from bot.plugins.image import upload_to_telegraph
 from pyrogram import Client, filters
 
 
