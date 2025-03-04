@@ -73,40 +73,17 @@ async def get_file_button_handler(c: Client, query: CallbackQuery):
         return
 
     user_id = query.from_user.id
-    chat_id = query.message.chat.id  
+    chat_id = query.message.chat.id
 
     try:
-        # ✅ Check if the user has started the bot
-        user_has_started_bot = False
-        async for dialog in c.iter_dialogs():
-            if dialog.chat.id == user_id:
-                user_has_started_bot = True
-                break
-
-        # ❌ If the user has NOT started the bot, show a start button (NO NOTIFICATION)
-        if not user_has_started_bot:
-            await query.message.reply_text(
-                "⚠ **You need to start the bot first before accessing the file!**",
-                reply_markup=InlineKeyboardMarkup([
-                    [InlineKeyboardButton("🤖 Start Bot", url=f"https://t.me/{c.me.username}?start=start")]
-                ]),
-                quote=True
-            )
-            await query.answer("⚠ Start the bot first!", show_alert=True)
-            return
-
-        # ✅ If user has started the bot, send the file
         file_msg = await c.get_messages(chat_id=Var.BIN_CHANNEL, message_ids=message_id)
         if not file_msg or (not file_msg.document and not file_msg.video and not file_msg.audio and not file_msg.photo):
-            await query.answer("⚠ No file found!", show_alert=True)
+            await query.answer("âš No file found!", show_alert=True)
             return
-
-        await c.send_message(user_id, "📂 **Here is your requested file:**")
         await file_msg.copy(chat_id=user_id)
-        await query.answer("✅ File sent to your DM!", show_alert=True)
-
+        await query.answer("âœ… File sent to your DM!", show_alert=True)
     except Exception as e:
-        await query.answer(f"⚠ Error: {str(e)}", show_alert=True)
+        await query.answer(f"âš Error: {str(e)}", show_alert=True)
 
 @StreamBot.on_message(filters.channel & (filters.document | filters.video | filters.photo) & ~filters.forwarded, group=-1)
 async def channel_receive_handler(bot, broadcast):
@@ -129,7 +106,7 @@ async def channel_receive_handler(bot, broadcast):
                 reply_markup=InlineKeyboardMarkup([
                     [InlineKeyboardButton("📺 Stream", url=stream_link),
                      InlineKeyboardButton("📥 Download", url=online_link)],
-                    [InlineKeyboardButton("📂 Get File", callback_data=f"get_file_{log_msg.id}")]
+                    [InlineKeyboardButton("📂 Get File", url=f"https://t.me/+upeMTiYNbTNkNjFk/{log_msg.id}")]
                 ])
             )
         except MessageNotModified:
