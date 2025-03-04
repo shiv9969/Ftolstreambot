@@ -72,29 +72,38 @@ async def get_file_button_handler(c: Client, query: CallbackQuery):
         await query.answer("Invalid callback data", show_alert=True)
         return
 
+    user_id = query.from_user.id
+    chat_id = query.message.chat.id  # Check where the query is coming from
+
     try:
+        # Try sending a test message to user's DM
+        try:
+            await c.send_message(user_id, "📂 **Checking your request...**")
+            user_has_started_bot = True
+        except Exception:
+            user_has_started_bot = False
+
+        # If user hasn't started the bot, send the "Start Bot" button in DM, not in the channel
+        if not user_has_started_bot:
+            await c.send_message(
+                user_id,
+                "⚠ **You need to start the bot first before accessing the file!**",
+                reply_markup=InlineKeyboardMarkup([
+                    [InlineKeyboardButton("🤖 Start Bot", url=f"https://t.me/{c.me.username}?start=start")]
+                ])
+            )
+            await query.answer("⚠ Check your DM!", show_alert=True)
+            return
+
+        # If user has started the bot, send the file
         file_msg = await c.get_messages(chat_id=Var.BIN_CHANNEL, message_ids=message_id)
         if not file_msg or (not file_msg.document and not file_msg.video and not file_msg.audio and not file_msg.photo):
             await query.answer("⚠ No file found!", show_alert=True)
             return
 
-        user_id = query.from_user.id
-        try:
-            # Try sending a private message
-            await c.send_message(user_id, "📂 **Here is your requested file:**")
-            await file_msg.copy(chat_id=user_id)
-            await query.answer("File sent to your DM!", show_alert=True)
-        except Exception:
-            # If bot can't send message in DM, show Start Bot button
-            start_bot_url = f"https://t.me/{c.me.username}?start=start"
-            await c.send_message(
-                user_id,
-                "⚠ You need to start the bot first before accessing the file!",
-                reply_markup=InlineKeyboardMarkup([
-                    [InlineKeyboardButton("🤖 Start Bot", url=start_bot_url)]
-                ])
-            )
-            await query.answer("Start the bot and try again!", show_alert=True)
+        await c.send_message(user_id, "📂 **Here is your requested file:**")
+        await file_msg.copy(chat_id=user_id)
+        await query.answer("✅ File sent to your DM!", show_alert=True)
 
     except Exception as e:
         await query.answer(f"⚠ Error: {str(e)}", show_alert=True)
