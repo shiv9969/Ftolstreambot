@@ -86,11 +86,11 @@ async def get_file_button_handler(c: Client, query: CallbackQuery):
         # If user hasn't started the bot, send the "Start Bot" button in DM, not in the channel
         if not user_has_started_bot:
             await c.send_message(
-                user_id,
-                "⚠ **You need to start the bot first before accessing the file!**",
-                reply_markup=InlineKeyboardMarkup([
-                    [InlineKeyboardButton("🤖 Start Bot", url=f"https://t.me/{c.me.username}?start=start")]
-                ])
+    user_id,
+    "⚠ **You need to start the bot first before accessing the file!**",
+    reply_markup=InlineKeyboardMarkup([
+        [InlineKeyboardButton("🤖 Start Bot", url=f"https://t.me/{c.me.username}?start=start")]
+    ])
             )
             await query.answer("⚠ Check your DM!", show_alert=True)
             return
