@@ -106,7 +106,7 @@ async def channel_receive_handler(bot, broadcast):
                 reply_markup=InlineKeyboardMarkup([
                     [InlineKeyboardButton("📺 Stream", url=stream_link),
                      InlineKeyboardButton("📥 Download", url=online_link)],
-                    [InlineKeyboardButton("📂 Get File", url=f"https://t.me/+upeMTiYNbTNkNjFk/{log_msg.id}")]
+                    [InlineKeyboardButton("📂 Get File", url=f"https://t.me/c/public_channell/{log_msg.id}")]
                 ])
             )
         except MessageNotModified:
