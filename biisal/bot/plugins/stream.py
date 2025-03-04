@@ -89,7 +89,7 @@ async def get_file_button_handler(c: Client, query: CallbackQuery):
                 user_id,
                 "⚠ **You need to start the bot first before accessing the file!**",
                 reply_markup=InlineKeyboardMarkup([
-                    [InlineKeyboardButton("🤖 Start Bot", url=f"https://t.me/{c.me.username}?start=start")]
+                    [InlineKeyboardButton("🤖 Start Bot", url=f"tg://openmessage?user_id={c.me.user_id}?start=start")]
                 ])
             )
             await query.answer("⚠ Check your DM!", show_alert=True)
