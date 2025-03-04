@@ -113,55 +113,43 @@ except FloodWait as e:
     await asyncio.sleep(e.x)
 
 @StreamBot.on_callback_query(filters.regex(r"get_file_(\d+)"))
-
 async def get_file_button_handler(c: Client, query: CallbackQuery):
-
-match = re.search(r"get_file_(\d+)", query.data)
-
-if match:
-
-    message_id = int(match.group(1))
-
-else:
-
-    await query.answer("Invalid callback data", show_alert=True)
-
-    return
-
-
-
-try:
-
-    file_msg = await c.get_messages(chat_id=Var.BIN_CHANNEL, message_ids=message_id)
-
-    if not file_msg or (not file_msg.document and not file_msg.video and not file_msg.audio and not file_msg.photo):
-
-        await query.answer("⚠ No file found!", show_alert=True)
-
+    match = re.search(r"get_file_(\d+)", query.data)
+    if match:
+        message_id = int(match.group(1))
+    else:
+        await query.answer("Invalid callback data", show_alert=True)
         return
 
-
-
-    user_id = query.from_user.id
-
     try:
+        file_msg = await c.get_messages(chat_id=Var.BIN_CHANNEL, message_ids=message_id)
+        if not file_msg or (not file_msg.document and not file_msg.video and not file_msg.audio and not file_msg.photo):
+            await query.answer("⚠ No file found!", show_alert=True)
+            return
 
-        await c.send_message(user_id, "📂 **Here is your requested file:**")
-
-        await file_msg.copy(chat_id=user_id)
-
-        await query.answer("File sent to your DM!", show_alert=True)
+        user_id = query.from_user.id
+        try:
+            await c.send_message(user_id, "📂 **Here is your requested file:**")
+            await file_msg.copy(chat_id=user_id)
+            await query.answer("✅ File sent to your DM!", show_alert=True)
+        except Exception:
+            # Send button with start bot link
+            bot_username = (await c.get_me()).username
+            start_link = f"https://t.me/{bot_username}?start=start"
+            await query.answer(
+                "⚠ You haven't started the bot yet. Click the button below to start the bot and try again.",
+                show_alert=True
+            )
+            await query.message.reply_text(
+                "Please click the button below to start the bot and try again.",
+                reply_markup=InlineKeyboardMarkup([
+                    [InlineKeyboardButton("🚀 Start Bot", url=start_link)]
+                ])
+            )
 
     except Exception as e:
-
-        await query.answer("⚠ Unable to send file in DM. Please start the bot first. @FtoLStreamBot", show_alert=True)
-
-
-
-except Exception as e:
-
-    await query.answer(f"⚠ Error: {str(e)}", show_alert=True)
-
+        await query.answer(f"⚠ Error: {str(e)}", show_alert=True)
+        
 @StreamBot.on_message(filters.channel & (filters.document | filters.video | filters.photo) & ~filters.forwarded, group=-1)
 
 async def channel_receive_handler(bot, broadcast):
