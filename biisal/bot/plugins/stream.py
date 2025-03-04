@@ -72,7 +72,7 @@ async def get_file_button_handler(c: Client, query: CallbackQuery):
         await query.answer("Invalid callback data", show_alert=True)
         return
 
-    user_id = query.from_user.id
+    user_id = query.from_user.id  # ✅ Corrected this line
     chat_id = query.message.chat.id  # Check where the query is coming from
 
     try:
@@ -89,7 +89,7 @@ async def get_file_button_handler(c: Client, query: CallbackQuery):
                 user_id,
                 "⚠ **You need to start the bot first before accessing the file!**",
                 reply_markup=InlineKeyboardMarkup([
-                    [InlineKeyboardButton("🤖 Start Bot", url=f"tg://openmessage?user_id={c.me.user_id}?start=start")]
+                    [InlineKeyboardButton("🤖 Start Bot", url=f"https://t.me/{c.me.username}?start=start")]
                 ])
             )
             await query.answer("⚠ Check your DM!", show_alert=True)
