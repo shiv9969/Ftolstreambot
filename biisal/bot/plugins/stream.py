@@ -84,7 +84,7 @@ async def get_file_button_handler(c: Client, query: CallbackQuery):
             await file_msg.copy(chat_id=user_id)
             await query.answer("File sent to your DM!", show_alert=True)
         except Exception as e:
-            await query.answer("⚠ Unable to send file in DM. Please start the bot first.", show_alert=True)
+            await query.answer("⚠ Unable to send file in DM. Please start the bot first. @FtoLStreamBot", show_alert=True)
 
     except Exception as e:
         await query.answer(f"⚠ Error: {str(e)}", show_alert=True)
