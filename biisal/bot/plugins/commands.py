@@ -1,5 +1,6 @@
 # (c) @biisal @adarsh
 
+import os 
 from biisal.bot import StreamBot
 from biisal.vars import Var
 import logging
@@ -14,6 +15,9 @@ from biisal.utils.file_properties import get_name, get_hash, get_media_file_size
 db = Database(Var.DATABASE_URL, Var.name)
 from pyrogram.types import ReplyKeyboardMarkup
 from biisal.vars import bot_name , bisal_channel , bisal_grp
+from image import upload_to_telegraph
+from pyrogram import Client, filters
+
 
 
 SRT_TXT = """<b>ᴊᴀɪ sʜʀᴇᴇ ram {}!,
@@ -199,3 +203,24 @@ async def cb_handler(client, query):
                      InlineKeyboardButton("ᴄʟᴏsᴇ ‼️", callback_data="close_data")
                   ]]            )
         )
+
+@Client.on_message(filters.command("image") & filters.reply)
+async def image_command(client, message):
+    """Handles the /image command."""
+    
+    # Check if the user replied to an image
+    if not message.reply_to_message or not message.reply_to_message.photo:
+        return await message.reply("Please reply to an image with /image command.")
+
+    # Download the image
+    photo = message.reply_to_message.photo
+    file_path = await client.download_media(photo)
+    
+    # Upload to Telegraph
+    telegraph_url = await upload_to_telegraph(file_path)
+    
+    # Delete the local file after upload
+    os.remove(file_path)
+    
+    # Send the Telegraph link
+    await message.reply(f"✅ **Your Telegraph Link:**\n[{telegraph_url}]({telegraph_url})", disable_web_page_preview=True)
