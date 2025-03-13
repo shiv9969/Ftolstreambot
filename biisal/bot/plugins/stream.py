@@ -45,7 +45,8 @@ async def private_receive_handler(c: Client, m: Message):
             reply_markup=InlineKeyboardMarkup([
                 [InlineKeyboardButton("📺 Stream", url=stream_link),
                  InlineKeyboardButton("📥 Download", url=online_link)],
-                [InlineKeyboardButton("📂 Get File", callback_data=f"get_file_{log_msg.id}")]
+                [InlineKeyboardButton("📂 Get File", callback_data=f"get_file_{log_msg.id}")],
+                [InlineKeyboardButton("𝖲𝗁𝖺𝗋𝖾 𝖫𝗂𝗇𝗄 🔗", url=f"https://telegram.me/share/url?url={file_link}")]
             ])
         )
     except FloodWait as e:
@@ -111,7 +112,8 @@ async def channel_receive_handler(bot, broadcast):
                 reply_markup=InlineKeyboardMarkup([
                     [InlineKeyboardButton("📺 Stream", url=stream_link),
                      InlineKeyboardButton("📥 Download", url=online_link)],
-                    [InlineKeyboardButton("📂 Get File", callback_data=f"get_file_{log_msg.id}")]
+                    [InlineKeyboardButton("📂 Get File", callback_data=f"get_file_{log_msg.id}")],
+                    [InlineKeyboardButton("𝖲𝗁𝖺𝗋𝖾 𝖫𝗂𝗇𝗄 🔗", url=f"https://telegram.me/share/url?url={file_link}")]
                 ])
             )
         except MessageNotModified:
