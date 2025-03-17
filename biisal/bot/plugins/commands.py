@@ -5,7 +5,7 @@ from biisal.bot import StreamBot
 from biisal.vars import Var
 import logging
 logger = logging.getLogger(__name__)
-from biisal.bot.plugins.stream import MY_PASS
+from biisal.bot.plugins.stream import MY_PASS, get_file_dict
 from biisal.utils.human_readable import humanbytes
 from biisal.utils.database import Database
 from pyrogram import filters
@@ -26,12 +26,18 @@ Sᴇɴᴅ ᴍᴇ ᴀɴʏ ғɪʟᴇ ᴀɴᴅ ɢᴇᴛ ᴀ ᴅɪʀᴇᴄᴛ ᴅᴏ
 
 @StreamBot.on_message(filters.command("start") & filters.private )
 async def start(b, m):
+    uid = m.from_user.id
     if not await db.is_user_exist(m.from_user.id):
         await db.add_user(m.from_user.id)
         await b.send_message(
             Var.NEW_USER_LOG,
             f"**Nᴇᴡ Usᴇʀ Jᴏɪɴᴇᴅ:** \n\n__Mʏ Nᴇᴡ Fʀɪᴇɴᴅ__ [{m.from_user.first_name}](tg://user?id={m.from_user.id}) __Sᴛᴀʀᴛᴇᴅ Yᴏᴜʀ Bᴏᴛ !!__"
         )
+    if file_media := get_file_dict.get(uid):
+        await file_media.copy(uid)
+        del get_file_dict[uid]
+        return
+    
     if Var.UPDATES_CHANNEL != "None":
         try:
             user = await b.get_chat_member(Var.UPDATES_CHANNEL, m.chat.id)
