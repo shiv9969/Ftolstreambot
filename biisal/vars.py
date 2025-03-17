@@ -14,7 +14,7 @@ class Var(object):
     MULTI_CLIENT = False
     API_ID = int(getenv('API_ID', '9301087'))
     API_HASH = str(getenv('API_HASH', 'cbabdb3f23de6326352ef3ac26338d9c'))
-    BOT_TOKEN = str(getenv('BOT_TOKEN' , '7368488558:AAFJZYQoRsnaf4v0UR2NlTRiIj6GnnbwnvY'))
+    BOT_TOKEN = str(getenv('BOT_TOKEN' , '6473122623:AAFF5upYe3g2z2XTlRnNnIQuG3yDqfcWKTA'))
     name = str(getenv('name', 'FToLStreamBot'))
     SLEEP_THRESHOLD = int(getenv('SLEEP_THRESHOLD', '60'))
     WORKERS = int(getenv('WORKERS', '4'))
