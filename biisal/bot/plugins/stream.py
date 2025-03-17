@@ -13,6 +13,7 @@ import re
 
 from biisal.utils.file_properties import get_name, get_hash, get_media_file_size
 
+# Environment variable for password handling
 MY_PASS = os.environ.get("MY_PASS", None)
 pass_dict = {}
 get_file_dict = {}
@@ -56,11 +57,11 @@ async def private_receive_handler(c: Client, m: Message):
 async def get_file_button_handler(c: Client, query: CallbackQuery):
     if match := re.search(r"get_file_(\d+)", query.data):
         message_id = int(match.group(1))
-        user_id = query.from_user.id  
-
+        user_id = query.from_user.id 
+        
         file_msg = await c.get_messages(chat_id=Var.BIN_CHANNEL, message_ids=message_id)
-        if not file_msg:
-            await query.answer("⚠ No File Found!", show_alert=True)
+        if not file_msg or (not file_msg.document and not file_msg.video and not file_msg.audio and not file_msg.photo):
+            await query.answer("⚠ No File Found !", show_alert=True)
             return
         try:
             await file_msg.copy(chat_id=user_id)
@@ -69,22 +70,52 @@ async def get_file_button_handler(c: Client, query: CallbackQuery):
             print(e)
             get_file_dict[user_id] = file_msg
             username = (await c.get_me()).username
-            await query.answer("Start Bot In PM First!", show_alert=True)
+            buttons = query.message.reply_markup.inline_keyboard if query.message.reply_markup else []
+            if len(buttons) > 3:
+               buttons.append([InlineKeyboardButton("Start In PM", url=f"https://telegram.me/{username}?start=gf")])
+               await query.message.edit_reply_markup(reply_markup=InlineKeyboardMarkup(buttons))
+            await query.answer("Start Bot In PM First !", show_alert=True)
+    else:
+        await query.answer("Invalid Callback Data !", show_alert=True)
+        return
 
 @StreamBot.on_callback_query(filters.regex(r"share_file_(\d+)"))
 async def share_file_button_handler(c: Client, query: CallbackQuery):
     if match := re.search(r"share_file_(\d+)", query.data):
         message_id = int(match.group(1))
-        user_id = query.from_user.id
 
         file_msg = await c.get_messages(chat_id=Var.BIN_CHANNEL, message_ids=message_id)
         if not file_msg:
             await query.answer("⚠ No File Found!", show_alert=True)
             return
+        
         try:
-            # Send the file to the user for easy forwarding
-            await file_msg.copy(chat_id=user_id)
-            await query.answer("✅ File sent! You can now forward it anywhere.", show_alert=True)
+            # Send the actual file so the user can forward it anywhere
+            if file_msg.document:
+                await query.message.reply_document(
+                    document=file_msg.document.file_id,
+                    caption=file_msg.caption if file_msg.caption else "Here is your file! 📂"
+                )
+            elif file_msg.video:
+                await query.message.reply_video(
+                    video=file_msg.video.file_id,
+                    caption=file_msg.caption if file_msg.caption else "Here is your video! 🎥"
+                )
+            elif file_msg.photo:
+                await query.message.reply_photo(
+                    photo=file_msg.photo.file_id,
+                    caption=file_msg.caption if file_msg.caption else "Here is your image! 📷"
+                )
+            elif file_msg.audio:
+                await query.message.reply_audio(
+                    audio=file_msg.audio.file_id,
+                    caption=file_msg.caption if file_msg.caption else "Here is your audio! 🎵"
+                )
+            else:
+                await query.answer("⚠ Unsupported file type!", show_alert=True)
+                return
+
+            await query.answer("✅ You can now forward this file anywhere!", show_alert=True)
         except Exception as e:
             print(e)
             await query.answer("⚠ Failed to send file!", show_alert=True)
