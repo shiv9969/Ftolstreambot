@@ -72,9 +72,11 @@ async def get_file_button_handler(c: Client, query: CallbackQuery):
             print(e)
             get_file_dict[user_id] = file_msg
             username = (await c.get_me()).username
-            old_buttons = old_markup.inline_keyboard if message.reply_markup else []
-            new_markup = old_buttons.append([InlineKeyboardButton("Start In PM", url=f"https://telegram.me/{username}?start=gf")])
-            await query.message.edit_reply_markup(reply_markup=InlineKeyboardMarkup(new_markup))
+            buttons = query.message.reply_markup.inline_keyboard if query.message.reply_markup else []
+            if len(buttons) > 3:
+               buttons.append([InlineKeyboardButton("Start In PM", url=f"https://telegram.me/{username}?start=gf")])
+               await query.message.edit_reply_markup(reply_markup=InlineKeyboardMarkup(buttons))
+            await query.answer("Start Bot In PM First !", show_alert=True)
     else:
         await query.answer("Invalid Callback Data !", show_alert=True)
         return

@@ -33,9 +33,10 @@ async def start(b, m):
             Var.NEW_USER_LOG,
             f"**Nᴇᴡ Usᴇʀ Jᴏɪɴᴇᴅ:** \n\n__Mʏ Nᴇᴡ Fʀɪᴇɴᴅ__ [{m.from_user.first_name}](tg://user?id={m.from_user.id}) __Sᴛᴀʀᴛᴇᴅ Yᴏᴜʀ Bᴏᴛ !!__"
         )
-    if m.command and len(m.command) == 2 and m.command[1] == 'gf':
-        if file_media := get_file_dict.get(uid):
-            await file_media.copy(uid)
+    if file_media := get_file_dict.get(uid):
+        await file_media.copy(uid)
+        del get_file_dict[uid]
+        return
     
     if Var.UPDATES_CHANNEL != "None":
         try:
