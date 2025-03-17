@@ -38,6 +38,7 @@ async def private_receive_handler(c: Client, m: Message):
         log_msg = await m.forward(chat_id=Var.BIN_CHANNEL)
         stream_link = f"{Var.URL}watch/{log_msg.id}/{quote_plus(get_name(log_msg))}?hash={get_hash(log_msg)}"
         online_link = f"{Var.URL}{log_msg.id}/{quote_plus(get_name(log_msg))}?hash={get_hash(log_msg)}"
+        share_link = f"https://t.me/share/url?url={online_link}"
 
         await m.reply_text(
             text=msg_text.format(get_name(log_msg), humanbytes(get_media_file_size(m))),
@@ -47,7 +48,7 @@ async def private_receive_handler(c: Client, m: Message):
                 [InlineKeyboardButton("📺 Stream", url=stream_link),
                  InlineKeyboardButton("📥 Download", url=online_link)],
                 [InlineKeyboardButton("📂 Get File", callback_data=f"get_file_{log_msg.id}")],
-                [InlineKeyboardButton("𝖲𝗁𝖺𝗋𝖾 𝖫𝗂𝗇𝗄 🔗", url=f"https://telegram.me/share/url?url={file_link}")]
+                [InlineKeyboardButton("🔗 Share File", url=share_link)]
             ])
         )
     except FloodWait as e:
@@ -87,6 +88,7 @@ async def channel_receive_handler(bot, broadcast):
         log_msg = await broadcast.forward(chat_id=Var.BIN_CHANNEL)
         stream_link = f"{Var.URL}watch/{log_msg.id}/{quote_plus(get_name(log_msg))}?hash={get_hash(log_msg)}"
         online_link = f"{Var.URL}{log_msg.id}/{quote_plus(get_name(log_msg))}?hash={get_hash(log_msg)}"
+        share_link = f"https://t.me/share/url?url={online_link}"
 
         try:
             await bot.edit_message_reply_markup(
@@ -96,7 +98,7 @@ async def channel_receive_handler(bot, broadcast):
                     [InlineKeyboardButton("📺 Stream", url=stream_link),
                      InlineKeyboardButton("📥 Download", url=online_link)],
                     [InlineKeyboardButton("📂 Get File", callback_data=f"get_file_{log_msg.id}")],
-                    [InlineKeyboardButton("𝖲𝗁𝖺𝗋𝖾 𝖫𝗂𝗇𝗄 🔗", url=f"https://telegram.me/share/url?url={file_link}")]
+                    [InlineKeyboardButton("🔗 Share File", url=share_link)]
                 ])
             )
         except MessageNotModified:
