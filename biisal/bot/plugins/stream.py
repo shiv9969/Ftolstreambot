@@ -25,7 +25,7 @@ msg_text = """<b>‣ ʏᴏᴜʀ ʟɪɴᴋ ɢᴇɴᴇʀᴀᴛᴇᴅ ! 😎
 ‣ Fɪʟᴇ ɴᴀᴍᴇ : <i>{}</i>
 ‣ Fɪʟᴇ ꜱɪᴢᴇ : {}
 
-\n‣ ❤️ Powered By : @CINEMAA_BOXOFFICE✨🫶</b>"""
+\n‣ ❤️ Powered By : @BoB_Files1 ✨🫶</b>"""
 
 @StreamBot.on_message(filters.private & (filters.document | filters.video | filters.audio | filters.photo), group=4)
 async def private_receive_handler(c: Client, m: Message):
