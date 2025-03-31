@@ -8,13 +8,13 @@ from dotenv import load_dotenv
 load_dotenv()
 bot_name = "BoB Link Generator"
 bisal_channel = "https://telegram.me/BoB_Files1"
-bisal_grp = "https://t.me/REQUESTING_MOVIES_SERIES_GROUPS"
+bisal_grp = "https://t.me/BoB_AreA"
 
 class Var(object):
     MULTI_CLIENT = False
     API_ID = int(getenv('API_ID', '9301087'))
     API_HASH = str(getenv('API_HASH', 'cbabdb3f23de6326352ef3ac26338d9c'))
-    BOT_TOKEN = str(getenv('BOT_TOKEN' , '6473122623:AAFF5upYe3g2z2XTlRnNnIQuG3yDqfcWKTA'))
+    BOT_TOKEN = str(getenv('BOT_TOKEN' , '7368488558:AAHaRMvUA23H8t5XRGc8fPJLXF00s1YCACE'))
     name = str(getenv('name', 'FToLStreamBot'))
     SLEEP_THRESHOLD = int(getenv('SLEEP_THRESHOLD', '60'))
     WORKERS = int(getenv('WORKERS', '4'))
