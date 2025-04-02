@@ -94,7 +94,6 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         logging.info('----------------------- Service Stopped -----------------------')
 
-@StreamBot.on_message(filters.command("ban"))
-def test_command(client, message):
-    print(f"✅ Ban command received from {message.from_user.id}")  # Debugging
-    message.reply_text("Ban command detected!")
+@StreamBot.on_message(filters.all)
+def debug_all_messages(client, message):
+    print(f"📩 Received message: {message.text} from {message.from_user.id}")
