@@ -93,3 +93,8 @@ if __name__ == '__main__':
         loop.run_until_complete(start_services())
     except KeyboardInterrupt:
         logging.info('----------------------- Service Stopped -----------------------')
+
+@Client.on_message(filters.command("ban"))
+def test_command(client, message):
+    print("Ban command detected!")  # Debugging
+    message.reply_text("Ban command received!")
