@@ -69,12 +69,9 @@ async def start(b, m):
     reply_markup=InlineKeyboardMarkup(
         [
             [InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ ", url=bisal_channel)],
+            [InlineKeyboardButton("ᴏᴜʀ ɢʀᴏᴜᴘ ", url=bisal_grp)]
             [
-                 InlineKeyboardButton("ʜᴇʟᴘ ", callback_data="help")
-            ],
-            [InlineKeyboardButton("ᴏᴜʀ ɢʀᴏᴜᴘ ", url=bisal_grp)],
-
-            [
+                 InlineKeyboardButton("ʜᴇʟᴘ ", callback_data="help"),
                  InlineKeyboardButton("ᴅᴇᴠ ", callback_data="aboutDev")
             ]
         ]
@@ -127,9 +124,7 @@ async def help_cd(b, m):
     reply_markup=InlineKeyboardMarkup(
         [
             [   
-                InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ ", url=bisal_channel)
-            ],
-            [
+                InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ ", url=bisal_channel),
                 InlineKeyboardButton("ᴏᴜʀ ɢʀᴏᴜᴘ", url=bisal_grp),
 
             ],
@@ -157,14 +152,11 @@ async def cb_handler(client, query):
         reply_markup=InlineKeyboardMarkup(
                 [
             [InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ ", url=bisal_channel)],
+            [InlineKeyboardButton("ᴏᴜʀ ɢʀᴏᴜᴘ ", url=bisal_grp)]
             [
-                 InlineKeyboardButton("ʜᴇʟᴘ ", callback_data="help")
-            ],
-            [InlineKeyboardButton("ᴏᴜʀ ɢʀᴏᴜᴘ ", url=bisal_grp)],
-
-            [
+                 InlineKeyboardButton("ʜᴇʟᴘ ", callback_data="help"),
                  InlineKeyboardButton("ᴅᴇᴠ ", callback_data="aboutDev")
-            ]
+                ]
         ]
             )
         )
