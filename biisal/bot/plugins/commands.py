@@ -70,13 +70,11 @@ async def start(b, m):
         [
             [InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ ", url=bisal_channel)],
             [
-                 InlineKeyboardButton("ᴀʙᴏᴜᴛ ", callback_data="about"),
                  InlineKeyboardButton("ʜᴇʟᴘ ", callback_data="help")
             ],
             [InlineKeyboardButton("ᴏᴜʀ ɢʀᴏᴜᴘ ", url=bisal_grp)],
 
             [
-                 InlineKeyboardButton("ᴅɪsᴄʟᴀɪᴍᴇʀ ", url=f"https://www.google.com"),
                  InlineKeyboardButton("ᴅᴇᴠ ", callback_data="aboutDev")
             ]
         ]
@@ -132,7 +130,6 @@ async def help_cd(b, m):
                 InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ ", url=bisal_channel)
             ],
             [
-                InlineKeyboardButton("ᴅɪsᴄʟᴀɪᴍᴇʀ ", url=f"https://www.google.com"),
                 InlineKeyboardButton("ᴏᴜʀ ɢʀᴏᴜᴘ", url=bisal_grp),
 
             ],
@@ -161,13 +158,11 @@ async def cb_handler(client, query):
                 [
             [InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ ", url=bisal_channel)],
             [
-                 InlineKeyboardButton("ᴀʙᴏᴜᴛ ", callback_data="about"),
                  InlineKeyboardButton("ʜᴇʟᴘ ", callback_data="help")
             ],
             [InlineKeyboardButton("ᴏᴜʀ ɢʀᴏᴜᴘ ", url=bisal_grp)],
 
             [
-                 InlineKeyboardButton("ᴅɪsᴄʟᴀɪᴍᴇʀ ", url=f"https://telegra.ph/Disclaimer-11-07-37"),
                  InlineKeyboardButton("ᴅᴇᴠ ", callback_data="aboutDev")
             ]
         ]
