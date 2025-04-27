@@ -1,0 +1,47 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Stream</title>
+  <link href="/static/video-js.css" rel="stylesheet">
+  <script src="/static/video.min.js"></script>
+  <script src="/static/hls.min.js"></script>
+  <style>
+    body {
+      background-color: #121212;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    video {
+      width: 80%;
+      height: auto;
+      background: black;
+    }
+  </style>
+</head>
+<body>
+
+<video id="video" class="video-js vjs-default-skin" controls preload="auto"></video>
+
+<script>
+var video = document.getElementById('video');
+if (Hls.isSupported()) {
+    var hls = new Hls();
+    hls.loadSource("/hls/{{video_id}}/master.m3u8");
+    hls.attachMedia(video);
+    hls.on(Hls.Events.MANIFEST_PARSED,function() {
+        video.play();
+    });
+} else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+    video.src = "/hls/{{video_id}}/master.m3u8";
+    video.addEventListener('loadedmetadata',function() {
+        video.play();
+    });
+}
+</script>
+
+</body>
+</html>
