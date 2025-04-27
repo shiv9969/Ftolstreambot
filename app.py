@@ -1,45 +1,51 @@
-# --- app.py optimized by ChatGPT ---
-
+from flask import Flask, request, Response, render_template, send_file
 import os
-import asyncio
-from flask import Flask, request, send_file, jsonify
-from utils_bot import save_file_async, generate_link
-from werkzeug.utils import secure_filename
+from flask_cors import CORS
 
 app = Flask(__name__)
-UPLOAD_FOLDER = "biisal"
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+CORS(app)
 
-@app.route('/')
-def index():
-    return jsonify({"message": "Bot is running!"})
+# Base URL configuration (Heroku ya manually set karoge)
+BASE_URL = os.environ.get("BASE_URL", "http://localhost:5000")
 
-@app.route('/upload', methods=['POST'])
-async def upload_file():
-    if 'file' not in request.files:
-        return jsonify({"error": "No file part"}), 400
+# Video streaming route
+@app.route('/stream/<path:filename>')
+def stream_file(filename):
+    file_path = os.path.join("uploads", filename)
+    file_size = os.path.getsize(file_path)
 
-    file = request.files['file']
-    if file.filename == '':
-        return jsonify({"error": "No selected file"}), 400
+    range_header = request.headers.get('Range', None)
+    if not range_header:
+        return send_file(file_path)
 
-    filename = secure_filename(file.filename)
-    file_path = os.path.join(UPLOAD_FOLDER, filename)
+    byte1, byte2 = 0, None
+    m = range_header.replace('bytes=', '').split('-')
+    if len(m) == 2:
+        byte1 = int(m[0])
+        if m[1]:
+            byte2 = int(m[1])
 
-    await save_file_async(file, file_path)
+    length = file_size - byte1
+    if byte2 is not None:
+        length = byte2 - byte1 + 1
 
-    link = generate_link(file_path)
-    return jsonify({"link": link})
+    with open(file_path, 'rb') as f:
+        f.seek(byte1)
+        data = f.read(length)
 
-@app.route('/download/<filename>', methods=['GET'])
-def download_file(filename):
-    filename = secure_filename(filename)
-    file_path = os.path.join(UPLOAD_FOLDER, filename)
+    rv = Response(data, 
+                  206,
+                  mimetype="video/mp4",
+                  content_type="video/mp4",
+                  direct_passthrough=True)
+    rv.headers.add('Content-Range', f'bytes {byte1}-{byte1 + length - 1}/{file_size}')
+    return rv
 
-    if not os.path.exists(file_path):
-        return jsonify({"error": "File not found"}), 404
+# Streaming page with player
+@app.route('/watch/<path:filename>')
+def watch(filename):
+    stream_url = f"{BASE_URL}/stream/{filename}"
+    return render_template("stream.html", stream_url=stream_url)
 
-    return send_file(file_path, as_attachment=True)
-
-if __name__ == '__main__':
-    app.run(debug=True)
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
