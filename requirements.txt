@@ -17,5 +17,6 @@ gunicorn<= 21.2.0
 moviepy
 ffmpeg-python
 fastapi
-unicorn
+uvicorn
 python-multipart
+jinja2
