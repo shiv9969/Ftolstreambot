@@ -1,2 +1,3 @@
-web: python -m biisal
+web: python app.py
+
  
