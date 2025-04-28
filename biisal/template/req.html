@@ -2,36 +2,43 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Stream Video</title>
-    <link href="/static/video.min.css" rel="stylesheet">
+    <title>Stream Player</title>
+
+    <!-- Video.js CSS (CDN se) -->
+    <link href="https://vjs.zencdn.net/7.20.3/video-js.css" rel="stylesheet" />
+
+    <!-- Apna Custom CSS -->
     <link href="/static/style.css" rel="stylesheet">
+
+    <!-- Video.js Player (CDN) -->
+    <script src="https://vjs.zencdn.net/7.20.3/video.min.js"></script>
+
+    <!-- HLS.js for HLS Streaming (CDN) -->
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
+
 <body>
 
-<video id="video" class="video-js vjs-default-skin" controls preload="auto" width="100%" height="auto">
-    <source src="" type="application/x-mpegURL">
-</video>
+    <video id="video" class="video-js vjs-default-skin" controls preload="auto" width="800" height="450"></video>
 
-<script src="/static/video.min.js"></script>
-<script src="/static/hls.min.js"></script>
-<script>
-    var video = document.getElementById('video');
-    var hlsUrl = window.location.pathname.replace('/stream', '/hls') + '/index.m3u8';
-
-    if (Hls.isSupported()) {
-        var hls = new Hls();
-        hls.loadSource(hlsUrl);
-        hls.attachMedia(video);
-        hls.on(Hls.Events.MANIFEST_PARSED, function () {
-            video.play();
-        });
-    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-        video.src = hlsUrl;
-        video.addEventListener('loadedmetadata', function () {
-            video.play();
-        });
-    }
-</script>
+    <script>
+        var video = document.getElementById('video');
+        var videoSrc = "{{ stream_url }}";  // Server se aayega
+        if (Hls.isSupported()) {
+            var hls = new Hls();
+            hls.loadSource(videoSrc);
+            hls.attachMedia(video);
+            hls.on(Hls.Events.MANIFEST_PARSED, function () {
+                video.play();
+            });
+        }
+        else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+            video.src = videoSrc;
+            video.addEventListener('loadedmetadata', function () {
+                video.play();
+            });
+        }
+    </script>
 
 </body>
 </html>
