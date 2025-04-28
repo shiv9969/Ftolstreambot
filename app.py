@@ -1,108 +1,59 @@
 import os
-import uuid
-import aiohttp
-import asyncio
-import aiofiles
-from aiohttp import web
+from fastapi import FastAPI, Request, UploadFile, Form
+from fastapi.responses import HTMLResponse, FileResponse
+from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
+import shutil
 import subprocess
 
-# Folders auto-create
-os.makedirs("uploads", exist_ok=True)
-os.makedirs("hls_output", exist_ok=True)
+app = FastAPI()
+templates = Jinja2Templates(directory="templates")
 
-routes = web.RouteTableDef()
+# Mount static folders
+app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+app.mount("/hls_output", StaticFiles(directory="hls_output"), name="hls_output")
 
-@routes.get('/')
-async def index(request):
-    return web.Response(text="Server is Running! Upload at /upload", content_type='text/html')
 
-@routes.post('/upload')
-async def upload(request):
-    reader = await request.multipart()
-    field = await reader.next()
-    filename = field.filename
+# Upload page
+@app.get("/", response_class=HTMLResponse)
+async def main(request: Request):
+    return templates.TemplateResponse("upload.html", {"request": request})
 
-    if not filename:
-        return web.Response(text="No file uploaded", status=400)
 
-    # Save file to uploads
-    unique_id = str(uuid.uuid4())
-    save_path = f'uploads/{unique_id}_{filename}'
+# Upload and convert
+@app.post("/upload")
+async def upload_file(file: UploadFile):
+    upload_path = f"uploads/{file.filename}"
+    with open(upload_path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
 
-    async with aiofiles.open(save_path, 'wb') as f:
-        while True:
-            chunk = await field.read_chunk()
-            if not chunk:
-                break
-            await f.write(chunk)
+    # Create HLS output
+    output_folder = "hls_output"
+    output_filename = os.path.splitext(file.filename)[0]
+    output_path = f"{output_folder}/{output_filename}.m3u8"
 
-    # Start HLS conversion
-    output_folder = f"hls_output/{unique_id}"
-    os.makedirs(output_folder, exist_ok=True)
-    hls_path = os.path.join(output_folder, "index.m3u8")
-
+    # Run ffmpeg command
     ffmpeg_cmd = [
         "ffmpeg",
-        "-i", save_path,
-        "-preset", "veryfast",
-        "-g", "48",
-        "-sc_threshold", "0",
-        "-map", "0",
-        "-c:v", "libx264",
-        "-c:a", "aac",
-        "-b:v", "1500k",
-        "-b:a", "128k",
-        "-hls_time", "4",
-        "-hls_playlist_type", "vod",
-        hls_path
+        "-i", upload_path,
+        "-profile:v", "baseline",
+        "-level", "3.0",
+        "-start_number", "0",
+        "-hls_time", "10",
+        "-hls_list_size", "0",
+        "-f", "hls",
+        output_path
     ]
-
     subprocess.run(ffmpeg_cmd)
 
-    stream_url = f"/stream/{unique_id}"
-    download_url = f"/download/{unique_id}"
+    return {"message": "Upload and conversion done!", "watch_url": f"/watch/{output_filename}"}
 
-    return web.json_response({"stream_url": stream_url, "download_url": download_url})
 
-@routes.get('/stream/{video_id}')
-async def stream(request):
-    video_id = request.match_info['video_id']
-    hls_file = f"hls_output/{video_id}/index.m3u8"
+# Watch video route
+@app.get("/watch/{filename}", response_class=HTMLResponse)
+async def watch_video(request: Request, filename: str):
+    stream_url = f"/hls_output/{filename}.m3u8"
+    return templates.TemplateResponse("stream.html", {"request": request, "stream_url": stream_url})
 
-    if not os.path.exists(hls_file):
-        return web.Response(text="Stream not found", status=404)
 
-    return web.FileResponse('./templates/stream.html')
-
-@routes.get('/hls/{video_id}/{file}')
-async def hls_files(request):
-    video_id = request.match_info['video_id']
-    file = request.match_info['file']
-    file_path = f"hls_output/{video_id}/{file}"
-
-    if not os.path.exists(file_path):
-        return web.Response(text="HLS File not found", status=404)
-
-    return web.FileResponse(file_path)
-
-@routes.get('/download/{video_id}')
-async def download(request):
-    video_id = request.match_info['video_id']
-    for file in os.listdir('uploads'):
-        if file.startswith(video_id):
-            return web.FileResponse(path=f'uploads/{file}', headers={
-                'Content-Disposition': f'attachment; filename="{file.split("_", 1)[-1]}"'
-            })
-
-    return web.Response(text="File not found", status=404)
-
-@routes.get('/static/{filename}')
-async def static_files(request):
-    filename = request.match_info['filename']
-    return web.FileResponse(f'static/{filename}')
-
-app = web.Application()
-app.add_routes(routes)
-
-if __name__ == '__main__':
-    web.run_app(app, port=int(os.environ.get("PORT", 8080)))
