@@ -24,6 +24,40 @@
     </header>
 
     <div class="container">
+        <!-- Plyr CSS -->
+<link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+
+<!-- Video Player -->
+<video id="player" controls playsinline></video>
+
+<!-- Plyr & HLS.js -->
+<script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
+<script>
+  const video = document.getElementById('player');
+  const videoSrc = "{{ file_url }}"; // or whatever variable holds your video link
+
+  if (Hls.isSupported()) {
+    const hls = new Hls();
+    hls.loadSource(videoSrc);
+    hls.attachMedia(video);
+    hls.on(Hls.Events.MANIFEST_PARSED, function () {
+      video.play();
+    });
+  } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+    video.src = videoSrc;
+    video.addEventListener('loadedmetadata', function () {
+      video.play();
+    });
+  }
+
+  const player = new Plyr(video, {
+    controls: ['play', 'progress', 'current-time', 'mute', 'volume', 'settings', 'fullscreen'],
+    settings: ['quality', 'speed'],
+  });
+</script>
+
         <a href=%s>
             <button class="cybr-btn">
                 Download
